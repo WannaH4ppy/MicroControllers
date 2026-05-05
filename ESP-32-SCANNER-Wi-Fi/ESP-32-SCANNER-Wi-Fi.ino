@@ -2,7 +2,7 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_ST7789.h>
 #include <SPI.h>
-#include <ELECHOUSE_CC1101_SRC_DRV.h> //biblioteka radia
+
 
 //piny ekranu
 // Definiujemy piny ekranu z Twojego schematu (IdeaSpark 1.9)
@@ -51,47 +51,6 @@ void setup() {
   tft.setCursor(0, 0);
   tft.println("Bootowanie...");
   tft.println("Antena Wi-Fi aktywna.");
-
-  // CC1101
-   tft.setTextColor(ST77XX_YELLOW);
-   tft.setCursor(0, 60); 
-   tft.println("Test magistrali SPI");
-   delay(1000);
-
-  // --- ZABEZPIECZENIE MAGISTRALI SPI ---
-  // Wymuszamy na ekranie, by na chwilę oddał autostradę danych dla Radia
-  pinMode(TFT_CS, OUTPUT);
-  digitalWrite(TFT_CS, HIGH); 
-
-   // 1. Mapujemy piny: podajemy procesorowi (SCK, MISO, MOSI, CSN)
-  ELECHOUSE_cc1101.setSpiPin(18, 19, 23, CC1101_CSN);
-  
-  // 2. Mapujemy piny przerwań: (GDO0, GDO2)
-  ELECHOUSE_cc1101.setGDO(CC1101_GDO0, CC1101_GDO2);
-
-  // 3. Budzimy fizycznie układ CC1101 (Tutaj wcześniej się zawieszało!)
-  ELECHOUSE_cc1101.Init();
-
-  tft.setCursor(10, 100);
-
-  // 4. Magiczny test: Czy procesor potrafi odczytać dane z radia?
-  if (ELECHOUSE_cc1101.getCC1101()) {
-    tft.setTextColor(ST77XX_GREEN);
-    tft.println("[OK] Radio CC1101");
-    tft.setCursor(10, 130);
-    tft.setTextColor(ST77XX_CYAN);
-    tft.println("Calkowity sukces!");
-    
-    // Od razu ustawiamy domyślną częstotliwość nasłuchu na europejskie piloty (433.92 MHz)
-    ELECHOUSE_cc1101.setMHZ(433.92);
-  } else {
-    // Jeśli MISO, MOSI, SCK, VCC lub GND nie stykają...
-    tft.setTextColor(ST77XX_RED);
-    tft.println("[ERROR] Brak CC1101!");
-    tft.setCursor(10, 130);
-    tft.setTextSize(1);
-    tft.println("Sprawdz okablowanie (VCC, GND, SPI)");
-  }
 
   // Wypisujemy to niżej (Y = 140), żeby nie nakładało się na test radia
   tft.setTextSize(2);
